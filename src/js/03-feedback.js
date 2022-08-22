@@ -3,10 +3,11 @@ const form = document.querySelector('.feedback-form');
 const input = document.querySelector('input');
 const message = document.querySelector('textarea');
 const KEY_STORAGE = "feedback-form-state";
-const formData = {
-    email: input.value,
-    message: message.value,
-};
+// const formData = {
+//     email: input.value,
+//     message: message.value,
+// };
+// const selectedFilters = {};
 
 form.addEventListener('submit', formSend);
 form.addEventListener('input', throttle(onInputFormState, 500));
@@ -14,17 +15,30 @@ saveState();
 
 function formSend (e) {
     e.preventDefault();
-    if (formData.email === "" || formData.message === "") {
+    const formData = new FormData(form);
+    formData.forEach((name, value) => {
+        
+        console.log(name, value);
+    })   
+    if (formData.value === "") {
         return alert('Заплните все поля');
     }
+    
     console.log("Form to send:", JSON.parse(localStorage.getItem(KEY_STORAGE)));
     form.reset();
     localStorage.removeItem(KEY_STORAGE);
 }
 
-function onInputFormState (e) {
-    formData[e.target.name] = e.target.value;
-    localStorage.setItem(KEY_STORAGE, JSON.stringify(formData))
+
+
+function onInputFormState(e) {
+    const email = input.value;
+    const text = message.value;
+    const selectedFilters = {
+        email,
+        text,
+    }
+    localStorage.setItem(KEY_STORAGE, JSON.stringify(selectedFilters))
 }
 
 function saveState() {
